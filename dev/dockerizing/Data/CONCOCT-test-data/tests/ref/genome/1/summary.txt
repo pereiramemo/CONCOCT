@@ -1,0 +1,13 @@
+#Summary
+#Generated on	Mon Jun 08 14:11:02 UTC 2015
+#Version	5
+chroms	1
+bases	7167884
+defined	6852365
+undefined	315519
+contigs	2087
+scaffolds	917
+interpad	300
+source	/workspace/CONCOCT-test-data/tests/velvet_71_c10K.fa
+bytes	6912544
+last modified	1433770345000
