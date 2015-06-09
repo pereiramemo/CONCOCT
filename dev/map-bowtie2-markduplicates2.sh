@@ -97,7 +97,7 @@ function check_prog() {
     done
 }
 
-check_prog bowtie2 samtools genomeCoverageBed
+check_prog bowtie2 samtools genomeCoverageBed bbmap.sh
 
 if [ ! -e $MRKDUP ]; then
     echo "$MRKDUP doesn't exist. Set MRKDUP location of jar" >&2

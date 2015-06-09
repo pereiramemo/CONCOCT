@@ -120,7 +120,7 @@ samtools sort $OUTDIR/${RNAME}_${QNAME}.bam $OUTDIR/${RNAME}_${QNAME}-s
 samtools index $OUTDIR/${RNAME}_${QNAME}-s.bam
 
 # Mark duplicates and sort
-java -Xms1g -Xmx24g -XX:ParallelGCThreads=$THREADS -XX:MaxPermSize=1g -XX:+CMSClassUnloadingEnabled \
+java -Xms1g -Xmx24g -XX:ParallelGCThreads=$THREADS -XX:MaxPermSize=10g -XX:+CMSClassUnloadingEnabled \
     -jar $MRKDUP \
     INPUT=$OUTDIR/${RNAME}_${QNAME}-s.bam \
     OUTPUT=$OUTDIR/${RNAME}_${QNAME}-smd.bam \
