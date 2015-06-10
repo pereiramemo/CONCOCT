@@ -1,4 +1,5 @@
-drm() { docker rm $(docker ps -q -a); }
-drmi() { docker rmi $(docker images -q); }
-alias drun="docker run -t -i --rm"
-dbuild() { docker build -t="$1" .; }
+drm() { sudo docker rm $(docker ps -q -a); }
+drmi() { sudo docker rmi $(docker images -q); }
+dirun() { sudo docker run -t -i --rm "$1" bash; }
+dimrun() { sudo docker run --net=host -ti --volume="$1" "$2" bash; }
+dbuild() { sudo docker build -t="$1" .; }

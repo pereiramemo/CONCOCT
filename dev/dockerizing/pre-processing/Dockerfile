@@ -72,13 +72,14 @@ RUN cd /bioinfo/software; \
 
 # CONCOCT scripts
 RUN cd /bioinfo/software; \
-wget --no-check-certificate https://raw.githubusercontent.com/pereiramemo/CONCOCT/master/dev/map-bowtie2-markduplicates2.sh; \
-wget --no-check-certificate https://raw.githubusercontent.com/pereiramemo/CONCOCT/master/dev/cut_up_fasta.py; \
-wget --no-check-certificate https://raw.githubusercontent.com/pereiramemo/CONCOCT/master/scripts/gen_input_table.py; \
-wget --no-check-certificate https://raw.githubusercontent.com/pereiramemo/CONCOCT/master/scripts/map-bowtie2-markduplicates.sh
+wget --no-check-certificate https://raw.githubusercontent.com/pereiramemo/CONCOCT/master/scripts/map-bowtie2-markduplicates2.sh; \
+wget --no-check-certificate https://raw.githubusercontent.com/pereiramemo/CONCOCT/master/scripts/cut_up_fasta.py; \
+wget --no-check-certificate https://raw.githubusercontent.com/pereiramemo/CONCOCT/master/scripts/gen_input_table.py; 
 
 RUN chmod +x /bioinfo/software/cut_up_fasta.py
 RUN chmod +x /bioinfo/software/map-bowtie2-markduplicates2.sh
-RUN chmod +x /bioinfo/software/map-bowtie2-markduplicates.sh
+RUN chmod +x /bioinfo/software/gen_input_table.py
 
 WORKDIR workspace
+
+
