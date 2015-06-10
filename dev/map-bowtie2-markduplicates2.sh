@@ -27,7 +27,7 @@ BOWTIE2_OPT=''
 MAPSOFT=bbmap
 
 # Parse options
-while getopts "khct:p:" opt; do
+while getopts "mkhct:p:" opt; do
     case $opt in
         c)
             CALCCOV=true
@@ -57,24 +57,32 @@ while getopts "khct:p:" opt; do
 done
 shift $(($OPTIND - 1)) 
 
+##################################
+# Checks START
+##################################
+
+# Check parameters
 if [ "$#" -ne "6" ]
 then
     echo "Invalid number of arguments: 6 needed but $# supplied" >&2
     echo "$HELPDOC"
     exit 1
 fi
+
 Q1=$1
 if [ ! -f "$Q1" ]
 then
     echo "Pair 1 doesn't exist: $1"
     exit 1
 fi
+
 Q2=$2
 if [ ! -f "$Q2" ]
 then
     echo "Pair 2 doesn't exist: $2"
     exit 1
 fi
+
 QNAME=$3
 REF=$4
 if [ ! -f "$REF" ]
@@ -99,28 +107,33 @@ function check_prog() {
 
 check_prog bowtie2 samtools genomeCoverageBed bbmap.sh
 
+# Check $MRKDUP variable (used to run MarkDuplicates.jar)
 if [ ! -e $MRKDUP ]; then
     echo "$MRKDUP doesn't exist. Set MRKDUP location of jar" >&2
     exit 1
 fi
 
-mkdir -p $OUTDIR
-
+# Check sequence files
 if [[ ! -s $Q1 || ! -s $Q2 ]]; then
     echo "$Q1 or $Q2 is empty" >&2
     exit 1
 fi
 
+##################################
+# Checks END
+##################################
+
+mkdir -p $OUTDIR
 
 ##################################
 # Map sequence to assembly: START
 ##################################
 
-
 if [[ $MAPSOFT =~ [bB][bB]map ]]; then
 
+bbmap.sh ref=$REF
 
-#work with bbmap
+ls $Q1 $Q2 | bbmap.sh in=stdin out=$OUTDIR/${RNAME}_${QNAME}.sam 
 
 elif
 
@@ -163,7 +176,7 @@ samtools sort $OUTDIR/${RNAME}_${QNAME}-smd.bam $OUTDIR/${RNAME}_${QNAME}-smds
 samtools index $OUTDIR/${RNAME}_${QNAME}-smds.bam
 
 # Determine Genome Coverage and mean coverage per contig
-if $CALCCOV; then
+if $CALCCOV; thenls
     genomeCoverageBed -ibam $OUTDIR/${RNAME}_${QNAME}-smds.bam > $OUTDIR/${RNAME}_${QNAME}-smds.coverage
     awk 'BEGIN {pc=""} 
     {
