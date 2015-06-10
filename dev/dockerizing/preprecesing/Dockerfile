@@ -16,6 +16,10 @@
 
 FROM debian:8
 
+
+ENV http_proxy="http://172.16.255.250:80"   
+ENV https_proxy="http://172.16.255.250:80"
+
 ENV PATH $PATH/:/bioinfo/software/bbmap/
 ENV PATH $PATH/:/bioinfo/software/
 
@@ -75,5 +79,6 @@ wget --no-check-certificate https://raw.githubusercontent.com/pereiramemo/CONCOC
 
 RUN chmod +x /bioinfo/software/cut_up_fasta.py
 RUN chmod +x /bioinfo/software/map-bowtie2-markduplicates2.sh
+RUN chmod +x /bioinfo/software/map-bowtie2-markduplicates.sh
 
 WORKDIR workspace

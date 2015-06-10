@@ -8,4 +8,26 @@
 
 
 
+# cut up reads to 1000 pb
+sudo docker run -tiv $(pwd)/velvet_71.fa:/workspace/velvet_71.fa test1 /bin/bash -c "cut_up_fasta.py -c 10000 -o 0 -m velvet_71.fa" > velvet_71_c10K.tmp1.fa 
+
+
+# map reads
+cd reads
+READS=$(pwd)
+ASSEMBLY=$(pwd)
+for f in reads/*_R1.fa; do
+    mkdir -p map.tmp1/$(basename $f);
+    cd map.tmp1/$(basename $f);
+    f=$(basename $f);    
+    mv $READS/$f .;
+    mv $READS/$(echo $f | sed s/R1/R2/) .
+    mv $ASSEMBLY/velvet_71_c10K.fa .;
+    sudo docker run -tiv $(pwd):/workspace/ test1 /bin/bash -c "map-bowtie2-markduplicates.sh -ct 1 -p '-f' $f  $(echo $f | sed s/R1/R2/) pair velvet_71_c10K.fa asm bowtie2;"		
+    mv $f $READS;
+    mv velvet_71_c10K.fa ../../;
+    cd ../../;
+done
+
+
 
