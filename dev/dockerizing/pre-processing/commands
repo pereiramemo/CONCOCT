@@ -11,7 +11,7 @@
 # cut up reads to 1000 pb
 #########################################
 
-sudo docker run -tiv $(pwd)/velvet_71.fa:/workspace/velvet_71.fa pre-process /bin/bash -c "cut_up_fasta.py -c 10000 -o 0 -m velvet_71.fa" > velvet_71_c10K.tmp1.fa 
+sudo docker run -tiv $(pwd)/velvet_71.fa:/workspace/velvet_71.fa epereira/pre-process /bin/bash -c "cut_up_fasta.py -c 10000 -o 0 -m velvet_71.fa" > velvet_71_c10K.fa 
 
 #########################################
 # map reads
@@ -21,6 +21,8 @@ cd reads
 READS=$(pwd)
 cd ../
 ASSEMBLY=$(pwd)
+
+
 for f in reads/*_R1.fa; do
     mkdir -p map/$(basename $f);
     cd map/$(basename $f);
@@ -29,7 +31,7 @@ for f in reads/*_R1.fa; do
     mv $READS/$(echo $f | sed s/R1/R2/) .
     mv $ASSEMBLY/velvet_71_c10K.fa .;
 
-    sudo docker run -tiv $(pwd):/workspace/ pre-process /bin/bash -c "map-bowtie2-markduplicates2.sh -m bbmap ct 1 -p '-f' $f  $(echo $f | sed s/R1/R2/) pair velvet_71_c10K.fa asm bowtie2;"		
+    sudo docker run -tiv $(pwd):/workspace/ epereira/pre-process /bin/bash -c "map-bowtie2-markduplicates2.sh -m bowtie2 -ct 1 -p '-f' $f  $(echo $f | sed s/R1/R2/) pair velvet_71_c10K.fa asm bowtie2;"		
 
     mv $f $READS;
     mv $(echo $f | sed s/R1/R2/) $READS;
@@ -41,7 +43,33 @@ done
 # create coverage tables 
 ########################################
 
-cd map
-sudo docker run -tiv $(pwd):/workspace/ pre-process /bin/bash -c "gen_input_table.py --isbedfiles  --samplenames <(for s in Sample*; do echo $s | cut -d'_' -f1; done) ../velvet_71_c10K.fa asm_pair-smds.coverage > concoct_inputtable.tsv"
 
+sudo docker run -tiv $(pwd):/workspace/ epereira/pre-process /bin/bash -c "gen_input_table.py --isbedfiles  --samplenames <(for s in Sample*; do echo $s | cut -d'_' -f1; done) velvet_71_c10K.fa asm_pair-smds.coverage" > concoct_inputtable.tsv
+
+
+########################################
+# run concoct 
+########################################
+
+sudo docker run --rm -v $(pwd)/:/workspace/ epereira/concoct:v2 concoct -c 40 --coverage_file map1/concoct_inputtable.tsv --composition_file contigs/velvet_71_c10K.fa -b out1
+
+##########################################################################################################################
+
+
+cut_up_fasta.py -c 10000 -o 0 -m contigs/velvet_71.fa > contigs/velvet_71_c10K.fa
+
+
+for f in $(pwd)/reads/*_R1.fa; do
+    mkdir -p map/$(basename $f);
+    cd map/$(basename $f);
+    map-bowtie2-markduplicates2.sh -m bbmap -ct 1 -p '-f' $f $(echo $f | sed s/R1/R2/) pair ../../contigs/velvet_71_c10K.fa asm bowtie2;
+    cd ../..;
+done
+
+
+cd map
+gen_input_table.py --isbedfiles \
+    --samplenames <(for s in Sample*; do echo $s | cut -d'_' -f1; done) \
+    ../contigs/velvet_71_c10K.fa */bowtie2/asm_pair-smds.coverage \
+> concoct_inputtable.tsv
 
