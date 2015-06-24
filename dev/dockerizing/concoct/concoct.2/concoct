@@ -1,0 +1,9 @@
+# concoct runner
+
+docker run --rm -v "$1":/workspace/ epereira/debian_concoct:v2 concoct  -c 40 --coverage_file $1 --composition_file $2 -b $3 
+
+if [ "$?" -ne "0" ]; then
+
+echo "input files should be in $path";
+
+fi
