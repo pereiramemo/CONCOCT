@@ -211,7 +211,7 @@ fi
 
 # Remove temp files
 if $RMTMPFILES; then
-       rm $OUTDIR/${RNAME}_${QNAME}.sam \
+       rm -f $OUTDIR/${RNAME}_${QNAME}.sam \
        $OUTDIR/${RNAME}_${QNAME}.bam \
        $OUTDIR/${RNAME}_${QNAME}-smd.bam \
        $OUTDIR/${RNAME}_${QNAME}-s.bam \
