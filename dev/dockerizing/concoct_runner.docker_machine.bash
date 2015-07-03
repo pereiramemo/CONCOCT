@@ -6,7 +6,7 @@ cutting contigs, mapping reads anb generating the coverage tables.
 EOF
 ) 
 
-echo $HELPDOCq
+echo $HELPDOC
 
 
 #######################################################################################
