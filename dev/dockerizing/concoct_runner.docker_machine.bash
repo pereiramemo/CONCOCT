@@ -6,7 +6,7 @@ cutting contigs, mapping reads anb generating the coverage tables.
 EOF
 ) 
 
-echo $HELPDOC
+echo $HELPDOCq
 
 
 #######################################################################################
@@ -19,9 +19,10 @@ MOUNT_POINT=$1
 
 if [ !$1 ]; then 
 
-	echo "pleas provide the path for mounting"; 
+	echo "please provide the path for mounting"; 
 	exit 1;
 fi 
+
 
 #drun_preprocess() { sudo docker run --net=host --volume=$MOUNT_POINT/:/workspace epereira/pre-process:v1 $@;}
 #drun_concoct() { sudo docker run --net=host --volume=$MOUNT_POINT/:/workspace epereira/concoct:v2 $@;}
@@ -99,11 +100,10 @@ $drun_preprocess cut_up_fasta.py -c 10000 -o 0 -m contigs/velvet_71.fa > contigs
 #######################################################################################
 #######################################################################################
 
-CONCOCT=/home/epereira/workspace/CONCOCT/
   
 for f in reads/*_R1.fa; do
     mkdir -p map/$(basename $f);
-    $CONCOCT/scripts/map-bowtie2-markduplicates3.sh -m bbmap -ct 1 -p '-f' $f $(echo $f | sed s/R1/R2/) pair contigs/velvet_71_c10K.fa asm map/$(basename $f)/bbmap;
+    $MOUNT_POINT/scripts/map-bowtie2-markduplicates3.sh -m bbmap -ct 1 -p '-f' $f $(echo $f | sed s/R1/R2/) pair contigs/velvet_71_c10K.fa asm map/$(basename $f)/bbmap;
 done 
 
 #######################################################################################
