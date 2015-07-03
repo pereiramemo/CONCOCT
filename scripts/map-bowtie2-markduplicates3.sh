@@ -166,7 +166,7 @@ $drun_preprocess samtools faidx $REF
 #docker run
 $drun_preprocess samtools view -bt $REF.fai $OUTDIR/${RNAME}_${QNAME}.sam > $OUTDIR/${RNAME}_${QNAME}.bam
 #docker run
-$drun_preprocess samtools sort $OUTDIR/${RNAME}_${QNAME}.bam $OUTDIR/${RNAME}_${QNAME}-s
+$drun_preprocess samtools sort -m 10G -@ 5 $OUTDIR/${RNAME}_${QNAME}.bam $OUTDIR/${RNAME}_${QNAME}-s
 #docker run
 $drun_preprocess samtools index $OUTDIR/${RNAME}_${QNAME}-s.bam
 
@@ -182,7 +182,7 @@ $drun_preprocess java -Xms1g -Xmx24g -XX:ParallelGCThreads=$THREADS -XX:MaxPermS
     MAX_FILE_HANDLES_FOR_READ_ENDS_MAP=1000 \
     REMOVE_DUPLICATES=TRUE
 #docker run
-$drun_preprocess samtools sort $OUTDIR/${RNAME}_${QNAME}-smd.bam $OUTDIR/${RNAME}_${QNAME}-smds
+$drun_preprocess samtools sort -m 10G -@ 5 $OUTDIR/${RNAME}_${QNAME}-smd.bam $OUTDIR/${RNAME}_${QNAME}-smds
 
 #docker run
 $drun_preprocess samtools index $OUTDIR/${RNAME}_${QNAME}-smds.bam
