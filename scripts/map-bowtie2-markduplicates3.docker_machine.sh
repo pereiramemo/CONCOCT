@@ -14,7 +14,7 @@ Options:
     -m      Mapping software: bbmap or bowtie2
     -h      This help documentation.
 EOF
-) 
+)
 
 set -o errexit
 set -o nounset
@@ -41,7 +41,7 @@ while getopts "m:khct:p:" opt; do
         p)
             BOWTIE2_OPT=$OPTARG
             ;;
-        m)  
+        m)
             MAPSOFT=$OPTARG
             ;;
         h)
@@ -55,7 +55,7 @@ while getopts "m:khct:p:" opt; do
             ;;
     esac
 done
-shift $(($OPTIND - 1)) 
+shift $(($OPTIND - 1))
 
 ##################################
 # Checks START
@@ -97,13 +97,13 @@ RNAME=$5
 OUTDIR=${6%/}
 
 MOUNT_POINT=$7
-if [ ! $MOUNT_POINT ]; then 
-	echo "please provide the path for mounting"; 
-	exit 1;
-fi 
+if [ ! $MOUNT_POINT ]; then
+        echo "please provide the path for mounting";
+        exit 1;
+fi
 
 ##########################################
-# Check sequence files 
+# Check sequence files
 ##########################################
 
 if [[ ! -s $Q1 || ! -s $Q2 ]]; then
@@ -118,8 +118,8 @@ fi
 mkdir -p $OUTDIR
 
 drun_preprocess="docker run --net=host --volume=$MOUNT_POINT/:/workspace epereira/pre-process:v1"
-drun_concoct="docker run --net=host --volume=$MOUNT_POINT/:/workspace epereira/concoct:v2"  
-#the alias dosen't work from docker run, should be specified in the Dockerfile 
+drun_concoct="docker run --net=host --volume=$MOUNT_POINT/:/workspace epereira/concoct:v2"
+#the alias dosen't work from docker run, should be specified in the Dockerfile
 
 #drun_preprocess() { docker run --net=host --volume=$MOUNT_POINT/:/workspace epereira/pre-process:v1 $@;}
 #drun_concoct() { docker run --net=host --volume=$MOUNT_POINT/:/workspace epereira/concoct:v2 $@;}
@@ -130,34 +130,34 @@ drun_concoct="docker run --net=host --volume=$MOUNT_POINT/:/workspace epereira/c
 
 if [[ $MAPSOFT =~ [bB][bB]map ]]; then
 
-	# Index reference
-	if [[ ! -d ref ]]; then	
-		#docker run
-		$drun_preprocess bbmap.sh ref=$REF	 		
-	fi
+        # Index reference
+        if [[ ! -d ref ]]; then
+                #docker run
+                $drun_preprocess bbmap.sh ref=$REF
+        fi
 
-	# Align Paired end
-	cat $Q1 $Q2 > tmp.fa; 
-	#docker run
-	$drun_preprocess bbmap.sh in=tmp.fa out=$OUTDIR/${RNAME}_${QNAME}.sam;
-	rm tmp.fa; 
+        # Align Paired end
+        cat $Q1 $Q2 > tmp.fa;
+        #docker run
+        $drun_preprocess bbmap.sh in=tmp.fa out=$OUTDIR/${RNAME}_${QNAME}.sam;
+        rm tmp.fa;
 
 elif [[ $MAPSOFT =~ bowtie2 ]]; then
 
-	# Index reference, Burrows-Wheeler Transform
-    	if [ ! -e ${REF}.1.bt2 ]; then
-		#docker run
-    		$drun_preprocess bowtie2-build $REF $REF;
-    	fi
+        # Index reference, Burrows-Wheeler Transform
+        if [ ! -e ${REF}.1.bt2 ]; then
+                #docker run
+                $drun_preprocess bowtie2-build $REF $REF;
+        fi
 
-	# Align Paired end
-	#docker run
-    	$drun_preprocess bowtie2 ${BOWTIE2_OPT} -p $THREADS -x $REF -1 $Q1 -2 $Q2 -S $OUTDIR/${RNAME}_${QNAME}.sam
+        # Align Paired end
+        #docker run
+        $drun_preprocess bowtie2 ${BOWTIE2_OPT} -p $THREADS -x $REF -1 $Q1 -2 $Q2 -S $OUTDIR/${RNAME}_${QNAME}.sam
 
-else 
+else
 
-	echo "no mapping software provided"
-	exit 1
+        echo "no mapping software provided"
+        exit 1
 
 fi
 
@@ -196,8 +196,8 @@ if $CALCCOV; then
 
     #docker run
     $drun_preprocess genomeCoverageBed -ibam $OUTDIR/${RNAME}_${QNAME}-smds.bam > $OUTDIR/${RNAME}_${QNAME}-smds.coverage
-    
-    awk 'BEGIN {pc=""} 
+
+    awk 'BEGIN {pc=""}
     {
         c=$1;
         if (c == pc) {
