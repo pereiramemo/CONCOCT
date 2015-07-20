@@ -98,7 +98,7 @@ fi
 #######################################################################################
 #######################################################################################
 
-$drun_preprocess "cut_up_fasta.py -c 10000 -o 0 -m contigs/velvet_71.fa > contigs/velvet_71_c10K.fa"
+$drun_preprocess "cut_up_fasta.py -c 10000 -o 0 -m $2 > contigs/osd_assembly_c10K.fa"
 
 #######################################################################################
 #######################################################################################
@@ -107,9 +107,9 @@ $drun_preprocess "cut_up_fasta.py -c 10000 -o 0 -m contigs/velvet_71.fa > contig
 #######################################################################################
 
 
-for f in reads/*_R1.fa; do
+for f in reads/OSD*_R1_*.fa; do
     mkdir -p map/$(basename $f);
-    bash $MOUNT_POINT/scripts/map-bowtie2-markduplicates3.docker_machine.sh -m bbmap -ct 1 -p '-f' $f $(echo $f | sed s/R1/R2/) pair contigs/velvet_71_c10K.fa asm map/$(basename $f)/bbmap $MOUNT_POINT;
+    bash $MOUNT_POINT/scripts/map-bowtie2-markduplicates3.docker_machine.sh -m bbmap -ct 1 -p '-f' $f $(echo $f | sed s/R1/R2/) pair contigs/osd_assembly_c10K.fa asm map/$(basename $f)/bbmap $MOUNT_POINT;
 done
 
 #######################################################################################
@@ -118,7 +118,7 @@ done
 #######################################################################################
 #######################################################################################
 
-$drun_preprocess "gen_input_table.py --isbedfiles  --samplenames <(ls -d  map/Sample* | sed 's/.*\///' | cut -d"_" -f1) contigs/velvet_71_c10K.fa  map/*/bbmap/asm_pair-smds.coverage" > concoct_inputtable.tsv
+$drun_preprocess "gen_input_table.py --isbedfiles  --samplenames <(ls -d  map/Sample* | sed 's/.*\///' | cut -d"_" -f1) contigs/ods_assembly_c10K.fa  map/*/bbmap/asm_pair-smds.coverage" > concoct_inputtable.tsv
 
 #######################################################################################
 #######################################################################################
